@@ -1,13 +1,13 @@
 window.addEventListener("load", function () {
     // anonymous function
-    var existingHistory
-    if (!JSON.parse(localStorage.getItem("history"))) {
-        existingHistory = [];
+    // var existingHistory
+    // if (!JSON.parse(localStorage.getItem("history"))) {
+    //     existingHistory = [];
 
-    } else {
-        existingHistory = JSON.parse(localStorage.getItem('history'))
-    }
-    var historyItems = [];
+    // } else {
+    //     existingHistory = JSON.parse(localStorage.getItem('history'))
+    // }
+    // var historyItems = [];
 
     // parenthesis empty, not passing it a value
     function getSearchValue() {
@@ -35,10 +35,10 @@ window.addEventListener("load", function () {
             })
             .then(function (data) {
                 console.log(data);
-                if (!existingHistory.includes(searchValue)) {
-                    // passing the function searchValue
-                    // handleHistory(searchValue)
-                }
+                // if (!existingHistory.includes(searchValue)) {
+                //     // passing the function searchValue
+                //     handleHistory(searchValue)
+                // }
                 todayEl = document.getElementById("today");
                 todayEl.textContent = "";
 
@@ -46,6 +46,7 @@ window.addEventListener("load", function () {
                 titleEl.classList.add("card-title");
                 titleEl.textContent = `${data.name} (${new Date().toLocaleDateString()})`;
                 console.log(todayEl);
+
                 // adding dynamically created elements
                 var cardEl = document.createElement("div");
                 cardEl.classList.add("card");
@@ -65,6 +66,8 @@ window.addEventListener("load", function () {
                 var imageEl = document.createElement("img");
                 imageEl.setAttribute("src", `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`);
 
+
+                // destination goes first, elements appended to cardbody
                 titleEl.appendChild(imageEl);
                 cardbodyEl.appendChild(titleEl);
                 cardbodyEl.appendChild(windEl);
@@ -74,10 +77,24 @@ window.addEventListener("load", function () {
                 todayEl.appendChild(cardEl);
 
                 getForecast(searchValue);
-                // getUvIndex(data.coord.lat, data.coord.lon);
+                getUvIndex(data.coord.lat, data.coord.lon);
+
 
 
             })
+    }
+
+    function handleHistory(searchValue) {
+        if (existingHistory && existingHistory.length > 0) {
+            var existingHistory = JSON.parse(localStorage.getItem("history"));
+            var newHistory = [...existingHistory, searchValue];
+            localStorage.setItem("history", JSON.stringify(newHistory));
+
+        }
+        else {
+            historyItems.push(searchValue);
+            localStorage.setItem("history", JSON.stringify(newHistory));
+        }
     }
 
     function getForecast(searchValue) {
@@ -88,9 +105,94 @@ window.addEventListener("load", function () {
             })
             .then(function (data) {
                 console.log(data);
-    
+                var forecastEl = document.getElementById("forecast");
+                forecastEl.innerHTML = ("<h4 class='mt-3'> 5 Day Forecast: </h4>");
+                // creating forecast place
+                var forecastRowEl = document.createElement("div");
+                forecastEl.classList.add("row");
+
+                for (var i = 0; i < data.list.length; i++) {
+
+                    if (data.list[i].dt_txt.indexOf("15:00:00") !== -1) {
+
+                        var columnEl = document.createElement("div");
+                        columnEl.classList.add("col-md-2");
+                        var cardEl = document.createElement("div");
+                        cardEl.classList.add("card", "bg-primary", "text-white");
+                        var cardbodyEl = document.createElement("div");
+                        cardbodyEl.classList.add("card-body", "p-2");
+                        // p-2 bootstrap class that adds padding
+
+                        var titleEl = document.createElement("h5");
+                        titleEl.classList.add("card-title");
+                        titleEl.textContent = new Date(
+                            data.list[i].dt_txt
+
+                        ).toLocaleDateString();
+
+
+
+                        var temperatureEl = document.createElement("p");
+                        temperatureEl.classList.add("card-text");
+                        temperatureEl.textContent = `Temp: ${data.list[i].main.temp} °F`;
+                        var imageEl = document.createElement("img");
+                        imageEl.setAttribute("src", `http://openweathermap.org/img/wn/${data.list[i].weather[0].icon}.png`);
+                        columnEl.appendChild(cardEl);
+
+                        cardbodyEl.appendChild(titleEl);
+                        cardbodyEl.appendChild(imageEl);
+                        cardbodyEl.appendChild(temperatureEl);
+                        cardEl.appendChild(cardbodyEl);
+                        forecastEl.appendChild(columnEl);
+
+
+
+                    }
+                }
+
             })
     }
+    function getUvIndex(lat, lon) {
+        var apiCall = `http://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=32213800518e5adda67ca68fed9146b6`;
+        fetch(apiCall)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                var cardbodyEl = document.querySelector(".card-body");
+                var uvEl = document.createElement("p");
+                uvEl.id = "uv";
+                uvEl.textContent = "UV Index: ";
+                var buttonEl = document.createElement("span");
+                buttonEl.classList.add("btn", "btn-sm");
+                console.log(data);
+                buttonEl.innerHTML = data.value;
+                console.log(data.value);
+                // button color
+                if (data.value < 3) {
+
+                    buttonEl.classList.add("btn-success");
+
+                } else if (data.value < 7) {
+
+                    buttonEl.classList.add("btn-warning");
+                }
+                else {
+                    buttonEl.classList.add("btn-danger");
+                }
+
+                cardbodyEl.appendChild(uvEl);
+                uvEl.appendChild(buttonEl);
+
+
+            })
+
+
+    }
+
+
+
+
 
     document.querySelector("#search-button").addEventListener("click", getSearchValue);
 })
