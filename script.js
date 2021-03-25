@@ -1,13 +1,13 @@
 window.addEventListener("load", function () {
     // anonymous function
-    // var existingHistory
-    // if (!JSON.parse(localStorage.getItem("history"))) {
-    //     existingHistory = [];
+    var existingHistory
+    if (!JSON.parse(localStorage.getItem("form-input"))) {
+        existingHistory = [];
 
-    // } else {
-    //     existingHistory = JSON.parse(localStorage.getItem('history'))
-    // }
-    // var historyItems = [];
+    } else {
+        existingHistory = JSON.parse(localStorage.getItem('history'))
+    }
+    var historyItems = [];
 
     // parenthesis empty, not passing it a value
     function getSearchValue() {
@@ -35,10 +35,10 @@ window.addEventListener("load", function () {
             })
             .then(function (data) {
                 console.log(data);
-                // if (!existingHistory.includes(searchValue)) {
-                //     // passing the function searchValue
-                //     handleHistory(searchValue)
-                // }
+                if (!existingHistory.includes(searchValue)) {
+                    // passing the function searchValue
+                    handleHistory(searchValue)
+                }
                 todayEl = document.getElementById("today");
                 todayEl.textContent = "";
 
