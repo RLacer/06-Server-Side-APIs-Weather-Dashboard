@@ -44,9 +44,9 @@ window.addEventListener("load", function () {
 
                 var titleEl = document.createElement("h3");
                 titleEl.classList.add("card-title");
-                todayEl.textContent = `${data.name} (${new Date().toLocaleDateString()})`;
+                titleEl.textContent = `${data.name} (${new Date().toLocaleDateString()})`;
                 console.log(todayEl);
-
+                // adding dynamically created elements
                 var cardEl = document.createElement("div");
                 cardEl.classList.add("card");
                 var windEl = document.createElement("p");
@@ -55,12 +55,40 @@ window.addEventListener("load", function () {
                 humidityEl.classList.add("card-text");
                 var temperatureEl = document.createElement("p");
                 temperatureEl.classList.add("card-text");
-                
+
+                windEl.textContent = `Wind Speed: ${data.wind.speed} mph`;
+                humidityEl.textContent = `Humidity: ${data.main.humidity} %`;
+                temperatureEl.textContent = `Temp: ${data.main.temp} °F`;
+
+                var cardbodyEl = document.createElement("div");
+                cardbodyEl.classList.add("card-body");
+                var imageEl = document.createElement("img");
+                imageEl.setAttribute("src", `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`);
+
+                titleEl.appendChild(imageEl);
+                cardbodyEl.appendChild(titleEl);
+                cardbodyEl.appendChild(windEl);
+                cardbodyEl.appendChild(humidityEl);
+                cardbodyEl.appendChild(temperatureEl);
+                cardEl.appendChild(cardbodyEl);
+                todayEl.appendChild(cardEl);
+
+                getForecast(searchValue);
+                // getUvIndex(data.coord.lat, data.coord.lon);
 
 
+            })
+    }
 
-
-
+    function getForecast(searchValue) {
+        var apiCall = `https://api.openweathermap.org/data/2.5/forecast?q=${searchValue}&units=imperial&appid=32213800518e5adda67ca68fed9146b6`
+        fetch(apiCall)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                console.log(data);
+    
             })
     }
 
