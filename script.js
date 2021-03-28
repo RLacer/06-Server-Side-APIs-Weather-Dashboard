@@ -5,23 +5,38 @@ window.addEventListener("load", function () {
         existingHistory = [];
 
     } else {
-        existingHistory = JSON.parse(localStorage.getItem('history'))
+        existingHistory = JSON.parse(localStorage.getItem("history"))
     }
     var historyItems = [];
 
+    if (existingHistory && existingHistory.length > 0) {
+        existingHistory.forEach(item => makeRow(item));
+
+    }
+
+    function makeRow(searchValue) {
+        var liEl = document.createElement('li');
+        liEl.classList.add("list-group-item", "list-group-item-action");
+        liEl.id = searchValue;
+        liEl.textContent = searchValue;
+
+        liEl.addEventListener("click", function (e) {
+            if (e.target.tagName === "LI") {
+                searchWeather(e.target.textContent);
+            }
+        });
+        document.getElementById("history").appendChild(liEl);
+    }
     // parenthesis empty, not passing it a value
     function getSearchValue() {
         var searchValue = document.getElementById("form-input").value;
         if (searchValue) {
 
-
             // passing it searchValue
             searchWeather(searchValue);
-
-
+            makeRow(searchValue);
+            document.querySelector("#form-input");
         }
-
-
     }
     // anything being  passed to the function needs a parameter when function is written
     function searchWeather(searchValue) {
@@ -79,21 +94,19 @@ window.addEventListener("load", function () {
                 getForecast(searchValue);
                 getUvIndex(data.coord.lat, data.coord.lon);
 
-
-
             })
     }
-
-    function handleHistory(searchValue) {
+    // checking local storage
+    var handleHistory = (searchValue) => {
         if (existingHistory && existingHistory.length > 0) {
-            var existingHistory = JSON.parse(localStorage.getItem("history"));
-            var newHistory = [...existingHistory, searchValue];
+            var existingEntries = JSON.parse(localStorage.getItem("history"));
+            var newHistory = [existingEntries, searchValue];
             localStorage.setItem("history", JSON.stringify(newHistory));
 
         }
         else {
             historyItems.push(searchValue);
-            localStorage.setItem("history", JSON.stringify(newHistory));
+            localStorage.setItem("history", JSON.stringify(historyItems));
         }
     }
 
@@ -131,10 +144,16 @@ window.addEventListener("load", function () {
                         ).toLocaleDateString();
 
 
-
+                        // weather icon , temp for future
                         var temperatureEl = document.createElement("p");
                         temperatureEl.classList.add("card-text");
                         temperatureEl.textContent = `Temp: ${data.list[i].main.temp} °F`;
+
+
+                        var humidityEl = document.createElement("p");
+                        humidityEl.classList.add("card-text");
+                        humidityEl.textContent = `Humidity: ${data.list[i].main.humidity} %`;
+
                         var imageEl = document.createElement("img");
                         imageEl.setAttribute("src", `http://openweathermap.org/img/wn/${data.list[i].weather[0].icon}.png`);
                         columnEl.appendChild(cardEl);
@@ -142,14 +161,12 @@ window.addEventListener("load", function () {
                         cardbodyEl.appendChild(titleEl);
                         cardbodyEl.appendChild(imageEl);
                         cardbodyEl.appendChild(temperatureEl);
+                        cardbodyEl.appendChild(humidityEl)
                         cardEl.appendChild(cardbodyEl);
                         forecastEl.appendChild(columnEl);
 
-
-
                     }
                 }
-
             })
     }
     function getUvIndex(lat, lon) {
@@ -168,7 +185,7 @@ window.addEventListener("load", function () {
                 console.log(data);
                 buttonEl.innerHTML = data.value;
                 console.log(data.value);
-                // button color
+                // button color for UV
                 if (data.value < 3) {
 
                     buttonEl.classList.add("btn-success");
@@ -184,15 +201,7 @@ window.addEventListener("load", function () {
                 cardbodyEl.appendChild(uvEl);
                 uvEl.appendChild(buttonEl);
 
-
             })
-
-
     }
-
-
-
-
-
     document.querySelector("#search-button").addEventListener("click", getSearchValue);
 })
