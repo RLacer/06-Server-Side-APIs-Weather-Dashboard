@@ -1,7 +1,7 @@
 window.addEventListener("load", function () {
     // anonymous function
     var existingHistory
-    if (!JSON.parse(localStorage.getItem("form-input"))) {
+    if (!JSON.parse(localStorage.getItem("#form-input"))) {
         existingHistory = [];
 
     } else {
@@ -101,7 +101,7 @@ window.addEventListener("load", function () {
         if (existingHistory && existingHistory.length > 0) {
             var existingEntries = JSON.parse(localStorage.getItem("history"));
             var newHistory = [existingEntries, searchValue];
-            localStorage.setItem("history", JSON.stringify(newHistory));
+            localStorage.setItem("form-input", JSON.stringify(newHistory));
 
         }
         else {
