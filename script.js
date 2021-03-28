@@ -79,7 +79,7 @@ window.addEventListener("load", function () {
                 var cardbodyEl = document.createElement("div");
                 cardbodyEl.classList.add("card-body");
                 var imageEl = document.createElement("img");
-                imageEl.setAttribute("src", `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`);
+                imageEl.setAttribute("src", `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`);
 
 
                 // destination goes first, elements appended to cardbody
@@ -155,7 +155,7 @@ window.addEventListener("load", function () {
                         humidityEl.textContent = `Humidity: ${data.list[i].main.humidity} %`;
 
                         var imageEl = document.createElement("img");
-                        imageEl.setAttribute("src", `http://openweathermap.org/img/wn/${data.list[i].weather[0].icon}.png`);
+                        imageEl.setAttribute("src", `https://openweathermap.org/img/wn/${data.list[i].weather[0].icon}.png`);
                         columnEl.appendChild(cardEl);
 
                         cardbodyEl.appendChild(titleEl);
@@ -170,7 +170,7 @@ window.addEventListener("load", function () {
             })
     }
     function getUvIndex(lat, lon) {
-        var apiCall = `http://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=32213800518e5adda67ca68fed9146b6`;
+        var apiCall = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=32213800518e5adda67ca68fed9146b6`;
         fetch(apiCall)
             .then(function (response) {
                 return response.json();
